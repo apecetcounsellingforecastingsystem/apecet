@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard — AP ECET Counselling Forecasting System{% endblock %}
+
+{% block content %}
+<div>
+  
+  <!-- Welcome Banner -->
+  <div class="glass-panel" style="padding: 2rem 2.5rem; margin-bottom: 2rem; position: relative; overflow: hidden;">
+    <div style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; opacity: 0.08; pointer-events: none;">🎓</div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
+          <span class="badge-safe">Active Candidate Session</span>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">AP ECET 2026 Phase 1</span>
+        </div>
+        <h1 style="font-size: 2.2rem;">Hello, {{ profile.username or session.get('username') }} 👋</h1>
+        <p style="color: var(--text-secondary); max-width: 600px; margin-top: 0.35rem;">
+          Your personalized AP ECET admission forecasting portal is ready. Forecast your college chances across 240+ institutions based on hybrid machine learning analysis.
+        </p>
+      </div>
+
+      <!-- Quick Action CTA -->
+      <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+        <a href="{{ url_for('predict_page') }}" class="btn-primary-glass" style="padding: 0.85rem 1.6rem; font-size: 1rem;">
+          🎯 Run Admission Forecast
+        </a>
+        <a href="{{ url_for('preferences_page') }}" class="btn-secondary-glass" style="padding: 0.85rem 1.4rem;">
+          📋 My Preference List ({{ pref_count }})
+        </a>
+      </div>
+    </div>
+
+    <!-- Candidate Profile Quick Summary Chips -->
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--glass-border);">
+      <div style="background: rgba(255, 255, 255, 0.05); padding: 0.4rem 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); font-size: 0.85rem;">
+        <span style="color: var(--text-muted);">Saved Rank:</span> <b>{{ profile.rank or 'Not set' }}</b>
+      </div>
+      <div style="background: rgba(255, 255, 255, 0.05); padding: 0.4rem 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); font-size: 0.85rem;">
+        <span style="color: var(--text-muted);">Category:</span> <b>{{ profile.category or 'OC' }}</b>
+      </div>
+      <div style="background: rgba(255, 255, 255, 0.05); padding: 0.4rem 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); font-size: 0.85rem;">
+        <span style="color: var(--text-muted);">Gender:</span> <b>{{ profile.gender or 'BOYS' }}</b>
+      </div>
+      <div style="background: rgba(255, 255, 255, 0.05); padding: 0.4rem 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); font-size: 0.85rem;">
+        <span style="color: var(--text-muted);">Region:</span> <b>{{ profile.region or 'AU' }}</b>
+      </div>
+      <div style="background: rgba(255, 255, 255, 0.05); padding: 0.4rem 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); font-size: 0.85rem;">
+        <span style="color: var(--text-muted);">Preferred Branch:</span> <b>{{ profile.preferred_branch or 'CSE' }}</b>
+      </div>
+      <a href="{{ url_for('profile_page') }}" style="align-self: center; font-size: 0.85rem; margin-left: 0.5rem;">Edit Profile ✎</a>
+    </div>
+  </div>
+
+  <!-- Stat Metric Cards Row -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+    
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Past Predictions</div>
+        <div class="stat-val">{{ total_predictions }}</div>
+        <div style="font-size: 0.75rem; color: var(--accent-cyan); margin-top: 0.2rem;">Available in history</div>
+      </div>
+      <div style="font-size: 2.2rem; opacity: 0.8;">📊</div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Saved Colleges</div>
+        <div class="stat-val">{{ saved_count }}</div>
+        <div style="font-size: 0.75rem; color: var(--accent-purple); margin-top: 0.2rem;">Bookmarked institutes</div>
+      </div>
+      <div style="font-size: 2.2rem; opacity: 0.8;">❤️</div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Web Options In List</div>
+        <div class="stat-val">{{ pref_count }}</div>
+        <div style="font-size: 0.75rem; color: var(--color-safe); margin-top: 0.2rem;">Ready to export</div>
+      </div>
+      <div style="font-size: 2.2rem; opacity: 0.8;">📋</div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Total Colleges Indexed</div>
+        <div class="stat-val">240</div>
+        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 0.2rem;">Across AU, SVU & OU</div>
+      </div>
+      <div style="font-size: 2.2rem; opacity: 0.8;">🏫</div>
+    </div>
+
+  </div>
+
+  <!-- Two-Column Layout: Notifications & Recent Predictions -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;" class="responsive-2col">
+    
+    <!-- Left: Counselling Notifications Center (Feature 17) -->
+    <div class="glass-panel" style="padding: 1.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.25rem;">📢 Counselling Alerts & Notices</h3>
+        <span class="badge-moderate">{{ notifications|length }} Active</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for n in notifications %}
+          <div style="padding: 1rem; border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.03); border-left: 4px solid {% if n.alert_type == 'important' %}#f59e0b{% else %}#06b6d4{% endif %};">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-weight: 600; font-size: 0.95rem;">{{ n.title }}</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">{{ n.publish_date }}</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">{{ n.description }}</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div style="margin-top: 1.25rem; text-align: right;">
+        <a href="{{ url_for('calendar_page') }}" style="font-size: 0.85rem;">View Full Counselling Calendar →</a>
+      </div>
+    </div>
+
+    <!-- Right: Recent Predictions Log (Feature 16) -->
+    <div class="glass-panel" style="padding: 1.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.25rem;">🕒 Recent Forecast Runs</h3>
+        <a href="{{ url_for('history_page') }}" style="font-size: 0.85rem;">Full History →</a>
+      </div>
+
+      {% if recent_predictions %}
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          {% for p in recent_predictions %}
+            <div style="padding: 1rem; border-radius: var(--radius-sm); background: var(--glass-card); border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem;">
+                  Rank {{ p.student_rank | intcomma }} — {{ p.branch }}
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                  {{ p.category }} | {{ p.gender }} | {{ p.counselling_round }} | {{ p.created_at[:10] }}
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="badge-{{ p.top_classification|lower if p.top_classification else 'safe' }}">
+                  {{ p.top_classification or 'Safe' }} ({{ p.top_probability or 85 }}%)
+                </span>
+                <a href="{{ url_for('view_prediction_results', pred_id=p.id) }}" class="btn-secondary-glass" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+                  Reopen
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+          <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🎯</span>
+          <p>No predictions run yet. Forecast your chances now to view college recommendations!</p>
+          <a href="{{ url_for('predict_page') }}" class="btn-primary-glass" style="margin-top: 1rem; padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+            Run First Forecast
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Feature Highlights Grid -->
+  <h3 style="font-size: 1.35rem; margin-bottom: 1.25rem;">🚀 Smart Counselling Tools</h3>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+    
+    <a href="{{ url_for('what_if_page') }}" class="glass-card" style="text-decoration:none;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔮</div>
+      <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">What-If Simulator</h4>
+      <p style="color: var(--text-secondary); font-size: 0.85rem;">Compare outcomes across different branches (e.g. CSE vs ECE vs AIML) or rank improvements side by side.</p>
+    </a>
+
+    <a href="{{ url_for('compare_page') }}" class="glass-card" style="text-decoration:none;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚖️</div>
+      <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">College Comparison</h4>
+      <p style="color: var(--text-secondary); font-size: 0.85rem;">Compare up to 4 colleges on cutoffs, tuition fees, lateral entry seats, hostel, and placements.</p>
+    </a>
+
+    <a href="{{ url_for('analytics_page') }}" class="glass-card" style="text-decoration:none;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
+      <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Cutoff Analytics</h4>
+      <p style="color: var(--text-secondary); font-size: 0.85rem;">Interactive Chart.js visualizations showing year-wise opening vs closing rank trends across 2023–2026.</p>
+    </a>
+
+    <a href="{{ url_for('preferences_page') }}" class="glass-card" style="text-decoration:none;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+      <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Smart Preference List</h4>
+      <p style="color: var(--text-secondary); font-size: 0.85rem;">Assemble, drag-to-reorder, and export your official web options list as a print-ready PDF.</p>
+    </a>
+
+  </div>
+
+</div>
+
+<style>
+@media (max-width: 900px) {
+  .responsive-2col {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+{% endblock %}

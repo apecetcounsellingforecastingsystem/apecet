@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Seat Matrix & Fee Management — AP ECET Admin{% endblock %}
+
+{% block content %}
+<div>
+  <div class="glass-panel" style="padding: 2rem 2.5rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+          <span class="badge-safe">Intake & Fees</span>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">Feature #24 — Seat Matrix</span>
+        </div>
+        <h1 style="font-size: 2rem;">College Seat Matrix & Fee Schedules</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Maintain lateral entry seat intake allocations and government-regulated fee structures.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="margin-top:0;">Add Seat Matrix Entry</h3>
+    <form method="POST" action="{{ url_for('admin_add_seat_matrix') }}" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:0.75rem; align-items:end;">
+      <div>
+        <label class="form-label">College Code</label>
+        <input type="text" name="college_code" class="form-control" required>
+      </div>
+      <div>
+        <label class="form-label">Branch Code</label>
+        <input type="text" name="branch_code" class="form-control" required>
+      </div>
+      <div>
+        <label class="form-label">Branch Name</label>
+        <input type="text" name="branch_name" class="form-control" required>
+      </div>
+      <div>
+        <label class="form-label">Intake Seats</label>
+        <input type="number" name="total_intake_seats" class="form-control" value="60" min="0">
+      </div>
+      <div>
+        <label class="form-label">Annual Fee (₹)</label>
+        <input type="number" name="fees" class="form-control" value="45000" min="0">
+      </div>
+      <div>
+        <button type="submit" class="btn-primary-glass">Add Entry</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="glass-panel" style="padding: 1.5rem;">
+    <div class="glass-table-wrapper">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>College Code</th>
+            <th>Branch Code</th>
+            <th>Branch Full Name</th>
+            <th>Total Intake Seats</th>
+            <th>Annual Tuition Fee</th>
+            <th>3-Year Cost</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in matrix %}
+            <tr>
+              <td><span style="color: var(--accent-cyan); font-weight:700;">{{ row.college_code }}</span></td>
+              <td><b>{{ row.branch_code }}</b></td>
+              <td>{{ row.branch_name }}</td>
+              <td><span class="badge-safe">{{ row.total_intake_seats }}</span></td>
+              <td><b>₹ {{ row.fees | intcomma }}</b></td>
+              <td style="color: var(--text-muted);">₹ {{ (row.fees * 3) | intcomma }}</td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_delete_seat_matrix', entry_id=row.id) }}" style="display:inline;" onsubmit="return confirm('Delete this entry?');">
+                  <button type="submit" class="btn-primary-glass" style="padding:0.25rem 0.5rem; font-size:0.75rem; background:#c0392b;">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

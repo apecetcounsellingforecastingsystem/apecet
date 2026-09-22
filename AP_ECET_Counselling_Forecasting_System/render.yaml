@@ -1,0 +1,26 @@
+# Render.com Blueprint — https://render.com
+services:
+  - type: web
+    name: ap-ecet-counselling
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT wsgi:app --timeout 120
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OTP_DEMO_MODE
+        value: "1"
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      - key: FLASK_DEBUG
+        value: "0"
+      # Uncomment and set for real OTP:
+      # - key: SMTP_USER
+      #   value: yourgmail@gmail.com
+      # - key: SMTP_PASSWORD
+      #   value: your-app-password
+      # - key: FAST2SMS_API_KEY
+      #   value: your-key
+      # - key: OTP_DEMO_MODE
+      #   value: "0"

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Manage Notifications — Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 960px; margin: 2rem auto;">
+  <h1 style="margin-bottom: 1.5rem;">📢 Counselling Notifications</h1>
+
+  <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="margin-top:0;">Publish New Notification</h3>
+    <form method="POST" action="{{ url_for('admin_notifications') }}">
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Title</label>
+        <input type="text" name="title" class="form-control" required>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="3" required></textarea>
+      </div>
+      <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+        <div style="flex:1;">
+          <label class="form-label">Type</label>
+          <select name="alert_type" class="form-control">
+            <option value="normal">Normal</option>
+            <option value="important">Important</option>
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label class="form-label">Publish Date</label>
+          <input type="date" name="publish_date" class="form-control">
+        </div>
+      </div>
+      <button type="submit" class="btn-primary-glass">Publish Notification</button>
+    </form>
+  </div>
+
+  <div class="glass-panel" style="padding: 1.5rem;">
+    <h3 style="margin-top:0;">Existing Notifications</h3>
+    <table style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr style="text-align:left; border-bottom:1px solid var(--border-color);">
+          <th style="padding:0.5rem;">Title</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in notifications %}
+        <tr style="border-bottom:1px solid var(--border-color);">
+          <td style="padding:0.6rem;">{{ n.title }}</td>
+          <td>{{ n.alert_type }}</td>
+          <td>{{ n.publish_date }}</td>
+          <td>{{ 'Active' if n.is_active else 'Inactive' }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_toggle_notification', note_id=n.id) }}" style="display:inline;">
+              <button type="submit" class="btn-primary-glass" style="padding:0.3rem 0.6rem; font-size:0.8rem;">Toggle</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="padding:1rem;">No notifications yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

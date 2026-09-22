@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Edit Cutoff — Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 560px; margin: 2rem auto;">
+  <div class="glass-panel" style="padding: 2rem;">
+    <h2 style="margin-top:0;">Edit Cutoff #{{ cutoff.id }}</h2>
+    <p style="color:var(--text-secondary); font-size:0.9rem;">
+      {{ cutoff.college_code }} — {{ cutoff.branch_name }} ({{ cutoff.year }})
+    </p>
+    <form method="POST">
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Opening Rank</label>
+        <input type="number" name="opening_rank" class="form-control" value="{{ cutoff.opening_rank or 0 }}" min="1" required>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Closing Rank</label>
+        <input type="number" name="closing_rank" class="form-control" value="{{ cutoff.closing_rank or 0 }}" min="1" required>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Category</label>
+        <input type="text" name="category" class="form-control" value="{{ cutoff.category or 'OC' }}">
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Gender</label>
+        <select name="gender" class="form-control">
+          <option value="BOYS" {% if cutoff.gender=='BOYS' %}selected{% endif %}>BOYS</option>
+          <option value="GIRLS" {% if cutoff.gender=='GIRLS' %}selected{% endif %}>GIRLS</option>
+        </select>
+      </div>
+      <div style="margin-bottom:1.5rem;">
+        <label class="form-label">Round</label>
+        <select name="round" class="form-control">
+          <option value="Phase 1" {% if cutoff.round=='Phase 1' %}selected{% endif %}>Phase 1</option>
+          <option value="Phase 2" {% if cutoff.round=='Phase 2' %}selected{% endif %}>Phase 2</option>
+          <option value="Final Phase" {% if cutoff.round=='Final Phase' %}selected{% endif %}>Final Phase</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-primary-glass">Save Changes</button>
+      <a href="{{ url_for('admin_cutoffs') }}" style="margin-left:1rem;">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

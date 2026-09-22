@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Counselling Calendar — Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 960px; margin: 2rem auto;">
+  <h1 style="margin-bottom: 1.5rem;">📅 Counselling Calendar Management</h1>
+
+  <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="margin-top:0;">Add Calendar Event</h3>
+    <form method="POST" action="{{ url_for('admin_calendar') }}">
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Stage Name</label>
+        <input type="text" name="stage_name" class="form-control" required placeholder="e.g. Phase 2 Web Options">
+      </div>
+      <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+        <div style="flex:1;">
+          <label class="form-label">Start Date</label>
+          <input type="date" name="start_date" class="form-control">
+        </div>
+        <div style="flex:1;">
+          <label class="form-label">End Date</label>
+          <input type="date" name="end_date" class="form-control">
+        </div>
+        <div style="flex:1;">
+          <label class="form-label">Status</label>
+          <select name="status" class="form-control">
+            <option value="upcoming">Upcoming</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="2"></textarea>
+      </div>
+      <button type="submit" class="btn-primary-glass">Add Event</button>
+    </form>
+  </div>
+
+  <div class="glass-panel" style="padding: 1.5rem;">
+    <h3 style="margin-top:0;">Current Schedule</h3>
+    <table style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr style="text-align:left; border-bottom:1px solid var(--border-color);">
+          <th style="padding:0.5rem;">#</th>
+          <th>Stage</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in events %}
+        <tr style="border-bottom:1px solid var(--border-color);">
+          <td style="padding:0.6rem;">{{ e.stage_order }}</td>
+          <td>{{ e.stage_name }}</td>
+          <td>{{ e.start_date }}</td>
+          <td>{{ e.end_date }}</td>
+          <td>{{ e.status }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="padding:1rem;">No events.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

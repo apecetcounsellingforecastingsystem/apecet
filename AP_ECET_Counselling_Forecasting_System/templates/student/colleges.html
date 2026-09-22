@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Colleges Directory & Search — AP ECET Counselling Forecasting System{% endblock %}
+
+{% block content %}
+<div>
+  
+  <!-- Header -->
+  <div class="glass-panel" style="padding: 2rem 2.5rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+          <span class="badge-safe">Master Directory</span>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">240 Recognized Institutes</span>
+        </div>
+        <h1 style="font-size: 2rem;">AP ECET Engineering Colleges Directory</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Search and explore affiliated engineering institutions across Andhra Pradesh.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="{{ url_for('compare_page') }}" class="btn-secondary-glass">
+          ⚖️ Open Comparison Tool
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filters Bar -->
+  <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+    <form method="GET" action="{{ url_for('colleges_page') }}">
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 1rem; align-items: flex-end;" class="search-grid">
+        
+        <!-- Search query -->
+        <div>
+          <label class="form-label">Search College Name / Code / Place</label>
+          <input type="text" name="q" class="form-control" placeholder="e.g. Gayatri Vidya Parishad or GVPCE" value="{{ filters.q or '' }}">
+        </div>
+
+        <!-- District Filter -->
+        <div>
+          <label class="form-label">District</label>
+          <select name="district" class="form-select">
+            <option value="">All Districts</option>
+            {% for d in districts %}
+              <option value="{{ d }}" {% if filters.district == d %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Region Filter -->
+        <div>
+          <label class="form-label">Region</label>
+          <select name="region" class="form-select">
+            <option value="">All Regions</option>
+            <option value="AU" {% if filters.region == 'AU' %}selected{% endif %}>AU Region</option>
+            <option value="SVU" {% if filters.region == 'SVU' %}selected{% endif %}>SVU Region</option>
+          </select>
+        </div>
+
+        <!-- Type Filter -->
+        <div>
+          <label class="form-label">Type</label>
+          <select name="type" class="form-select">
+            <option value="">All Types</option>
+            <option value="PVT" {% if filters.type == 'PVT' %}selected{% endif %}>Private</option>
+            <option value="GOV" {% if filters.type == 'GOV' %}selected{% endif %}>Govt / University</option>
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button type="submit" class="btn-primary-glass" style="padding: 0.75rem 1.25rem;">
+            🔍 Search
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Colleges Table / Card Grid -->
+  <div class="glass-panel" style="padding: 1.5rem;">
+    <div style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+      Showing <b>{{ colleges|length }}</b> institutions matching your criteria:
+    </div>
+
+    <div class="glass-table-wrapper">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>College Name</th>
+            <th>Place & District</th>
+            <th>Region</th>
+            <th>Affiliation</th>
+            <th>Type</th>
+            <th>Hostel</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for col in colleges %}
+            <tr>
+              <td>
+                <span style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 700; font-size: 0.85rem;">
+                  {{ col.college_code }}
+                </span>
+              </td>
+              <td>
+                <a href="{{ url_for('college_detail', college_code=col.college_code) }}" style="font-weight: 600;">
+                  {{ col.college_name }}
+                </a>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Est: {{ col.year_of_establishment or 'N/A' }}</div>
+              </td>
+              <td>{{ col.place }}, <b>{{ col.district }}</b></td>
+              <td><span class="badge-safe" style="font-size: 0.75rem; padding: 0.15rem 0.45rem;">{{ col.region }}</span></td>
+              <td>{{ col.affiliated_to or 'JNTU' }}</td>
+              <td>{{ col.type or 'PVT' }}</td>
+              <td>{{ col.hostel_availability or 'Available' }}</td>
+              <td>
+                <div style="display: flex; gap: 0.4rem;">
+                  <a href="{{ url_for('college_detail', college_code=col.college_code) }}" class="btn-secondary-glass" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;">
+                    Profile ℹ️
+                  </a>
+                  <a href="{{ url_for('compare_page') }}?add={{ col.college_code }}" class="btn-secondary-glass" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;" title="Add to Compare">
+                    ⚖️
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<style>
+@media (max-width: 900px) {
+  .search-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+{% endblock %}

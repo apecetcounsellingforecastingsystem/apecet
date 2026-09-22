@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Edit College — Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 640px; margin: 2rem auto;">
+  <div class="glass-panel" style="padding: 2rem;">
+    <h2 style="margin-top:0;">Edit College: {{ college.college_code }}</h2>
+    <form method="POST">
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">College Name</label>
+        <input type="text" name="college_name" class="form-control" value="{{ college.college_name or '' }}" required>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">District</label>
+        <input type="text" name="district" class="form-control" value="{{ college.district or '' }}">
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">Region (AU / SVU / UR)</label>
+        <input type="text" name="region" class="form-control" value="{{ college.region or 'AU' }}">
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label">College Type</label>
+        <input type="text" name="college_type" class="form-control" value="{{ college.college_type or '' }}">
+      </div>
+      <div style="margin-bottom:1.5rem;">
+        <label class="form-label">Website</label>
+        <input type="url" name="website" class="form-control" value="{{ college.website or '' }}">
+      </div>
+      <button type="submit" class="btn-primary-glass">Save Changes</button>
+      <a href="{{ url_for('admin_colleges') }}" style="margin-left:1rem;">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
